@@ -1,0 +1,37 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "gcc",
+            "args": ["-Wall", "-Wextra", "-Werror", "${workspaceFolder}/${fileBasename}", "-o", "${fileBasenameNoExtension}"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "run bin",
+            "command": "./srcs/${fileBasenameNoExtension}",
+        },
+        {
+            "label": "Run",
+            "type": "shell",
+            "command": "echo ${workspaceFolder} && pwd && gcc -g srcs/*.c -L libft -lft -Iincludes -Ilibft -o ${fileDirname}/${fileBasenameNoExtension} && ${fileDirname}/${fileBasenameNoExtension} ",
+            //"args": ["-Wall", "-Werror", "-Wextra", "${file}"],
+            "presentation": {
+              "reveal": "always",
+              "panel": "shared"
+            },
+            "group": {
+              "kind": "build",
+              "isDefault": true
+            }
+        }
+    ]
+}
