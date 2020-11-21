@@ -6,16 +6,13 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 19:44:52 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/21 14:31:21 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 14:48:17 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
 # define PARSER_H
 
-
-float			moving_atof(char **str);
-int				moving_atoi(char **str);
 typedef 		struct	s_coords
 {
 	float		x;
@@ -93,5 +90,9 @@ typedef struct	s_trinangle
 	t_coords	p3;
 	t_color		color;
 }				t_trinangle;
+int				parse_rgb(char **line, t_color *color);
+int				is_end(char	*s);
+float			moving_atof(char **str);
+int				moving_atoi(char **str);
 
 #endif

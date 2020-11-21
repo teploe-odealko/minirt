@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 14:28:41 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/21 14:34:49 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 14:50:11 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,13 @@
 // 	}
 // 	return (len);
 // }
+
+int				is_end(char	*s)
+{
+	while (*s && *s == ' ')
+		s++;
+	return (*s == '\0' ? 1 : 0);
+}
 
 static double	moving_atof_helper(char **str, double res)
 {
@@ -88,4 +95,36 @@ int				moving_atoi(char **str)
 		(*str)++;
 	}
 	return (sign * res);
+}
+
+
+
+/*
+returns:
+- 0 if everything is ok, 
+- 5 if some parsing errors,
+- 7 if rgb invalid
+*/
+int			parse_rgb(char **line, t_color *color)
+{
+	while(**line == ' ')
+		(*line)++;	
+	if (!ft_isdigit(**line))
+		return (5);
+	color->r = moving_atoi(line);
+	if (**line == ',')
+		(*line)++;
+	if (!ft_isdigit(**line))
+		return (5);
+	color->g = moving_atoi(line);
+	if (**line == ',')
+		(*line)++;
+	if (!ft_isdigit(**line))
+		return (5);
+	color->b = moving_atoi(line);
+	if (is_digit_in_bounds(color->r, 0, 255)
+	&& is_digit_in_bounds(color->g, 0, 255)
+	&& is_digit_in_bounds(color->b, 0, 255))
+		return (0);
+	return (7);
 }
