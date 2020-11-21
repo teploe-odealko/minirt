@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 18:32:20 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/21 14:51:00 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 15:21:09 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,6 @@ void				*errors_handler(int errcode, t_elements *elements);
 t_elements			*parser(char *filesafdname);
 t_resolution		*resolution_parser(char *line, t_elements *elements);
 t_ambient			*ambient_parser(char *line, t_elements *elements);
+t_camera			*camera_parser(char *line, t_elements *elements);
 
 #endif

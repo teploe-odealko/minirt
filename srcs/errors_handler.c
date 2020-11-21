@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 23:04:40 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/21 14:06:00 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 15:41:57 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ void	*errors_handler(int errcode, t_elements *elements)
 	else if (errcode == 6)
 		ft_putstr_fd("Error\ninvalid ambient light\n", 2);
 	else if (errcode == 7)
-		ft_putstr_fd("Error\nrgb light\n", 2);
+		ft_putstr_fd("Error\nrgb invalid\n", 2);
+	else if (errcode == 8)
+		ft_putstr_fd("Error\ncoords invalid\n", 2);
 	return (NULL);
 }

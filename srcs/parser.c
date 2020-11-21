@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 19:44:50 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/21 14:51:15 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 15:19:14 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void		*switcher(char *line, t_elements *elements)
 		return (resolution_parser(line+1, elements));
 	else if (line[0] == 'A' && line[1] == ' ')
 		return (ambient_parser(line+1, elements));
+	else if (line[0] == 'c' && line[1] == ' ')
+		return (camera_parser(line+1, elements));
 	else
 	{
 		merrno = 5;

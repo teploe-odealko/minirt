@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 19:44:52 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/21 14:48:17 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 16:21:31 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ typedef struct	s_trinangle
 	t_color		color;
 }				t_trinangle;
 int				parse_rgb(char **line, t_color *color);
+int				parse_coords(char **line, t_coords *coords);
 int				is_end(char	*s);
 float			moving_atof(char **str);
 int				moving_atoi(char **str);
