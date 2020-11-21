@@ -1,6 +1,7 @@
 {
 	"files.associations": {
 		"general.h": "c",
-		"unistd.h": "c"
+		"unistd.h": "c",
+		"algorithm": "c"
 	}
 }

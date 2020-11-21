@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 23:26:14 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/20 23:54:32 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 12:42:30 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,11 @@
 
 void	parcer_checker(t_elements *elements)
 {
-	printf("R %d, %d", elements->resolution->w, elements->resolution->h);
+	printf("R %d, %d\n", elements->resolution->w, elements->resolution->h);
+	printf("A %f, %d,%d,%d", elements->ambient->ratio,
+	elements->ambient->color.r,
+	elements->ambient->color.g,
+	elements->ambient->color.b);
 }
 
 int main(int argc, char *argv[])
@@ -28,9 +32,10 @@ int main(int argc, char *argv[])
 	// mlx = mlx_init();
 	t_elements *elements;
 
+	elements = NULL;
 	if (argc != 2)
 	{
-		errors_handler(4);
+		errors_handler(4, elements);
 		return (-1);
 	}
 	if (!(elements = parser(argv[1])))

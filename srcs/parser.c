@@ -6,91 +6,12 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 19:44:50 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/21 00:29:53 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 14:30:53 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-int		numlen(long long nb)
-{
-	int	len;
-
-	len = 0;
-	if (nb)
-		return (1);
-	while (nb > 0)
-	{
-		nb /= 10;
-		len++;
-	}
-	return (len);
-}
-
-double	ft_moving_atof_helper(char **str, double res)
-{
-	double	fraction;
-
-	fraction = 0.1;
-	if (*(*str) == '.')
-	{
-		(*str)++;
-		while (*(*str) >= '0' && *(*str) <= '9')
-		{
-			res = res + (*(*str) - '0') * fraction;
-			fraction *= 0.1;
-			(*str)++;
-		}
-	}
-	return (res);
-}
-
-float	ft_moving_atof(char **str)
-{
-	int		sign;
-	double	res;
-
-	sign = 1;
-	res = 0;
-	while (*(*str) == ' ' || *(*str) == '\t' || *(*str) == '\n' ||
-		*(*str) == '\r' || *(*str) == '\v' || *(*str) == '\f')
-		(*str)++;
-	if (*(*str) == '-')
-		sign = -1;
-	if (*(*str) == '-' || *(*str) == '+')
-		(*str)++;
-	while (*(*str) >= '0' && *(*str) <= '9')
-	{
-		res = res * 10 + *(*str) - '0';
-		(*str)++;
-	}
-	res = ft_moving_atof_helper(str, res);
-	return (sign * res);
-}
-
-// int		ambient_parser(char *line)
-// {
-// 	t_resolution *ambient;
-
-// 	ambient = malloc(sizeof(t_resolution));
-// 	if (!ambient)
-// 		errors_handler(2);
-// 	ambient->w = ft_moving_atoi(line);
-// 	ambient->h = ft_moving_atoi(line);
-// 	if (ambient->h > 0 && ambient->w > 0)
-// 		g_ambient = ambient;
-// 	else
-// 	{
-// 		free(ambient);
-// 		errors_handler(3);
-// 	}
-// }
-
-/*
-- returns t_resolution pointer, if
-everything is ok, and NULL otherwise
-- sets errno
-*/
 int				is_end(char	*s)
 {
 	while (*s && *s == ' ')
@@ -102,8 +23,8 @@ t_resolution	*resolution_parser(char *line, t_elements *elements)
 {
 	extern int		merrno;
 
-	elements->resolution->w = (int)ft_moving_atof(&line);
-	elements->resolution->h = (int)ft_moving_atof(&line);
+	elements->resolution->w = (int)moving_atof(&line);
+	elements->resolution->h = (int)moving_atof(&line);
 	if (elements->resolution->h <= 0 
 	|| elements->resolution->w <= 0
 	|| !is_end(line))
@@ -114,19 +35,83 @@ t_resolution	*resolution_parser(char *line, t_elements *elements)
 	return (elements->resolution);
 }
 
+// int			is_digit_in_bounds(int d, int bound_min, int bound_max)
+// {
+// 	if (d >= bound_min && d <= bound_max)
+// 		return (1);
+// 	return (0);
+// }
+
+int			is_digit_in_bounds(float d, float bound_min, float bound_max)
+{
+	if (d >= bound_min && d <= bound_max)
+		return (1);
+	return (0);
+}
+
+/*
+returns 0 if everything is ok, 
+5 if some parsing errors,
+7 if rgb invalid
+*/
+int			parse_rgb(char **line, t_color *color)
+{
+	while(**line == ' ')
+		(*line)++;	
+	if (!ft_isdigit(**line))
+		return (5);
+	color->r = moving_atoi(line);
+	if (**line == ',')
+		(*line)++;
+	if (!ft_isdigit(**line))
+		return (5);
+	color->g = moving_atoi(line);
+	if (**line == ',')
+		(*line)++;
+	if (!ft_isdigit(**line))
+		return (5);
+	color->b = moving_atoi(line);
+	if (is_digit_in_bounds(color->r, 0, 255)
+	&& is_digit_in_bounds(color->g, 0, 255)
+	&& is_digit_in_bounds(color->b, 0, 255))
+		return (0);
+	return (7);
+}
+
+t_ambient		*ambient_parser(char *line, t_elements *elements)
+{
+	extern int	merrno;
+
+	elements->ambient->ratio = moving_atof(&line);
+	if (!is_digit_in_bounds(elements->ambient->ratio, 0, 1))
+	{
+		merrno = 6;
+		return (NULL);
+	}
+	if ((merrno = parse_rgb(&line, &(elements->ambient)->color)) != 0)
+		return (NULL);
+	return (elements->ambient);
+}
+
+/*
+- returns t_resolution pointer, if
+everything is ok, and NULL otherwise
+- sets errno
+*/
+
 void		*switcher(char *line, t_elements *elements)
 {
 	extern int	merrno;
 
 	if (line[0] == 'R' && line[1] == ' ')
 		return (resolution_parser(line+1, elements));
+	else if (line[0] == 'A' && line[1] == ' ')
+		return (ambient_parser(line+1, elements));
 	else
 	{
 		merrno = 5;
 		return (NULL);
 	}
-	// else if (line[0] == 'A' && line[1] == ' ')
-	// 	ambient_parser(line+1);
 }
 
 t_elements	*elements_creator(void)
@@ -137,13 +122,13 @@ t_elements	*elements_creator(void)
 		return (NULL);
 	elements->ambient = malloc(sizeof(t_ambient));
 	elements->resolution = malloc(sizeof(t_resolution));
-	elements->camera_list = malloc(sizeof(t_list));
-	elements->cylinder_list = malloc(sizeof(t_list));
-	elements->light_list = malloc(sizeof(t_list));
-	elements->plane_list = malloc(sizeof(t_list));
-	elements->sphere_list = malloc(sizeof(t_list));
-	elements->square_list = malloc(sizeof(t_list));
-	elements->trinangle_list = malloc(sizeof(t_list));
+	elements->camera_list = ft_lstnew(NULL);
+	elements->cylinder_list = ft_lstnew(NULL);
+	elements->light_list = ft_lstnew(NULL);
+	elements->plane_list = ft_lstnew(NULL);
+	elements->sphere_list = ft_lstnew(NULL);
+	elements->square_list = ft_lstnew(NULL);
+	elements->trinangle_list = ft_lstnew(NULL);
 	if (!elements->ambient || !elements->resolution
 	|| !elements->camera_list || !elements->cylinder_list
 	|| !elements->light_list || !elements->plane_list
@@ -158,28 +143,7 @@ returns t_elements pointer with parsed info, if
 everything is ok, and NULL otherwise
 */
 
-void		free_struct(void *my_struct)
-{
-	free(my_struct);
-}
 
-
-//seg fault in destructor!!!!
-void		destructor(t_elements *elements)
-{
-	free(elements->ambient);
-	elements->ambient = NULL;
-	free(elements->resolution);
-	elements->resolution = NULL;
-	ft_lstclear(&(elements->camera_list), &free_struct);
-	ft_lstclear(&(elements->cylinder_list), &free_struct);
-	ft_lstclear(&(elements->light_list), &free_struct);
-	ft_lstclear(&(elements->plane_list), &free_struct);
-	ft_lstclear(&(elements->sphere_list), &free_struct);
-	ft_lstclear(&(elements->square_list), &free_struct);
-	ft_lstclear(&(elements->trinangle_list), &free_struct);
-	free(elements);
-}
 
 t_elements	*parser(char *filename)
 {
@@ -190,10 +154,10 @@ t_elements	*parser(char *filename)
 
 	merrno = 0;
 	if (!(elements = elements_creator()))
-		return (errors_handler(2));
+		return (errors_handler(2, elements));
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		return (errors_handler(0));
+		return (errors_handler(0, elements));
 	while (get_next_line(fd, &line) > 0)
 	{
 		if (*line == '\0')
@@ -204,13 +168,12 @@ t_elements	*parser(char *filename)
 		if (line == NULL || !line[0] || !line[1])
 		{
 			free(line);
-			return (errors_handler(1));
+			return (errors_handler(1, elements));
 		}
 		if (!(switcher(line, elements)))
 		{
 			free(line);
-			destructor(elements);
-			return (errors_handler(merrno));
+			return (errors_handler(merrno, elements));
 		}
 		free(line);
 	}

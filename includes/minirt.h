@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 18:32:20 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/20 21:02:43 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/21 13:47:39 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 #include "parser.h"
 
 
-void				*errors_handler(int errcode);
 
+int					merrno;
 typedef struct		s_elements
 {
 	t_resolution*	resolution;
@@ -36,6 +36,7 @@ typedef struct		s_elements
 	t_list*			trinangle_list;
 }					t_elements;
 
+void				*errors_handler(int errcode, t_elements *elements);
 t_elements			*parser(char *filesafdname);
 
 #endif
