@@ -22,7 +22,7 @@
         {
             "label": "Run",
             "type": "shell",
-            "command": "echo ${workspaceFolder} && pwd && gcc -g srcs/*.c -L libft -lft -Iincludes -Ilibft -o ${fileDirname}/${fileBasenameNoExtension} && ${fileDirname}/${fileBasenameNoExtension} ",
+            "command": "echo ${workspaceFolder} && pwd && gcc -g srcs/*.c -L libft -lft -lmlx -framework OpenGL -framework AppKit -Iincludes -Ilibft -o ${fileDirname}/${fileBasenameNoExtension} && ${fileDirname}/${fileBasenameNoExtension} ",
             //"args": ["-Wall", "-Werror", "-Wextra", "${file}"],
             "presentation": {
               "reveal": "always",

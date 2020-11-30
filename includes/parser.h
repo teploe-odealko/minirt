@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 19:44:52 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/21 16:21:31 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/11/30 14:52:02 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,19 +36,21 @@ typedef struct	s_color
 
 typedef struct	s_resolution
 {
+	int		is_already_exist;
 	int		w;
 	int		h;
 }				t_resolution;
 
 typedef struct	s_ambient
 {
+	int		is_already_exist;
 	float	ratio;
 	t_color	color;
 }				t_ambient;
 
 typedef struct	s_camera
 {
-	t_vector3	orient;
+	t_vector3	direction;
 	t_coords	coords;
 	int			FOV;
 }				t_camera;
@@ -92,6 +94,7 @@ typedef struct	s_trinangle
 }				t_trinangle;
 int				parse_rgb(char **line, t_color *color);
 int				parse_coords(char **line, t_coords *coords);
+int				parse_norm_vector(char **line, t_vector3 *vector3);
 int				is_end(char	*s);
 float			moving_atof(char **str);
 int				moving_atoi(char **str);

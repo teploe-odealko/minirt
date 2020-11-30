@@ -6,7 +6,7 @@
 #    By: bashleig <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/16 12:28:49 by bashleig          #+#    #+#              #
-#    Updated: 2020/11/21 14:37:37 by bashleig         ###   ########.fr        #
+#    Updated: 2020/11/30 16:48:52 by bashleig         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,9 @@ INSLUDES = -I $(HEADER) -I $(LIBFT)
 SRCS = main.c \
 		parser.c \
 		parser_utils.c \
+		utils.c \
 		general_elements_parser.c \
+		shapes_parser.c \
 		errors_handler.c
 
 OBJ		= $(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))
