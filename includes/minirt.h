@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 18:32:20 by bashleig          #+#    #+#             */
-/*   Updated: 2020/12/01 01:52:35 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/12/01 19:12:37 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 
 
-
+#define MAX_INT 2147483647
 int					merrno;
 typedef struct		s_elements
 {
@@ -53,14 +53,24 @@ typedef struct		s_mlx
 	int		endian;
 }					t_mlx;
 
+typedef struct	s_sq_eq_sol
+{
+	float	d;
+	float	x1;
+	float	x2;
+}				t_sq_eq_sol;
+
 
 void				*errors_handler(int errcode, t_elements *elements);
+void				destructor(t_elements *elements);
 t_elements			*parser(char *filesafdname);
 t_resolution		*resolution_parser(char *line, t_elements *elements);
 t_ambient			*ambient_parser(char *line, t_elements *elements);
 t_camera			*camera_parser(char *line, t_elements *elements);
 t_light				*light_parser(char *line, t_elements *elements);
 t_sphere			*sphere_parser(char *line, t_elements *elements);
-
-
+float				scalar_mul(t_vector3 *v1, t_vector3 *v2);
+float				vect_len(t_vector3 v1);
+t_sq_eq_sol 		square_equasion(float a, float b, float c);
+int					minint(int a, int b);
 #endif

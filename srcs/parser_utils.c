@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 14:28:41 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/30 16:51:49 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/12/01 19:21:12 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int			parse_rgb(char **line, t_color *color)
 	return (7);
 }
 
-int			parse_coords(char **line, t_coords *coords)
+int			parse_coords(char **line, t_vector3 *coords)
 {
 	while(**line == ' ')
 		(*line)++;
@@ -82,22 +82,22 @@ int			parse_norm_vector(char **line, t_vector3 *vector3)
 {
 	while(**line == ' ')
 		(*line)++;
-	if (!ft_isdigit(**line))
+	if (!ft_isdigit(**line) && (**line != '-' && !ft_isdigit(line[0][1])))
 		return (5);
 	vector3->x = moving_atof(line);
 	if (**line == ',')
 		(*line)++;
-	if (!ft_isdigit(**line))
+	if (!ft_isdigit(**line) && (**line != '-' && !ft_isdigit(line[0][1])))
 		return (5);
 	vector3->y = moving_atof(line);
 	if (**line == ',')
 		(*line)++;
-	if (!ft_isdigit(**line))
+	if (!ft_isdigit(**line) && (**line != '-' && !ft_isdigit(line[0][1])))
 		return (5);
 	vector3->z = moving_atof(line);
-	if (is_digit_in_bounds(vector3->x, 0, 1)
-	&& is_digit_in_bounds(vector3->y, 0, 1)
-	&& is_digit_in_bounds(vector3->z, 0, 1))
+	if (is_digit_in_bounds(vector3->x, -1, 1)
+	&& is_digit_in_bounds(vector3->y, -1, 1)
+	&& is_digit_in_bounds(vector3->z, -1, 1))
 		return (0);
 	return (9);
 }
