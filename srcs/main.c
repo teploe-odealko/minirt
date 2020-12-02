@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 23:26:14 by bashleig          #+#    #+#             */
-/*   Updated: 2020/12/01 19:11:29 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/12/02 02:43:47 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,28 @@ void	parcer_printer(t_elements *elements)
 
 
 //danger !!! could returns NULL
+// t_vector3	canvas_to_viewport(float x, float y, t_elements *elements)
+// {
+// 	t_vector3	d;
+// 	float		x_v;
+// 	float		y_v;
+// 	float		z_v;
+// 	float		o_v_norm;
+// 	t_vector3	camera_coords;
+// 	t_vector3	camera_dir;
+
+// 	camera_dir = ((t_camera*)(elements->camera_list->content))->direction;
+// 	camera_coords = ((t_camera*)(elements->camera_list->content))->coords;
+// 	o_v_norm = 0.5/tan(70);
+// 	x_v = sqrt(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.x + camera_coords.x;
+// 	y_v = sqrt(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.y + camera_coords.y;
+// 	z_v = sqrt(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.z + camera_coords.z;
+// 	d.x = x_v + ((x - elements->resolution->w / 2) / elements->resolution->w);
+// 	d.y = y_v + ((y - elements->resolution->h / 2) / elements->resolution->w);
+// 	d.z = z_v;
+//     return (d);
+// }
+
 t_vector3	canvas_to_viewport(float x, float y, t_elements *elements)
 {
 	t_vector3 d;
@@ -87,8 +109,6 @@ t_vector3	canvas_to_viewport(float x, float y, t_elements *elements)
 	d.z = 1;
     return (d);
 }
-
-
 
 t_vector3	subtract_vectors(t_vector3 *v1, t_vector3 *v2)
 {
@@ -205,8 +225,8 @@ t_color		compute_color(t_elements *elements, t_vector3 *camera_coords,
 	n.z /= sqrt(scalar_mul(&n, &n));
 	light = compute_lighting(elements, p, n);
 	color.r = (light * (float)sphere->color.r);
-	color.g = (light * (float)sphere->color.r);
-	color.b = (light * (float)sphere->color.r);
+	color.g = (light * (float)sphere->color.g);
+	color.b = (light * (float)sphere->color.b);
 	return (color);
 }
 //danger !!! could returns NULL

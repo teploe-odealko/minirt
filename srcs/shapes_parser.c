@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 16:41:47 by bashleig          #+#    #+#             */
-/*   Updated: 2020/11/30 17:04:32 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/12/01 22:14:58 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ t_sphere		*sphere_parser(char *line, t_elements *elements)
 {
 	extern int	merrno;
 	t_list		*new_node;
-	t_sphere		*new_shape;
+	t_sphere	*new_shape;
 
 	if (!(new_shape = (t_sphere*)malloc(sizeof(t_sphere))))
 	{

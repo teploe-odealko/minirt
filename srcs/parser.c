@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 19:44:50 by bashleig          #+#    #+#             */
-/*   Updated: 2020/12/01 01:36:25 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/12/01 22:12:42 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ t_elements	*elements_creator(void)
 returns t_elements pointer with parsed info, if
 everything is ok, and NULL otherwise
 */
+// BUG last row in the file dosent handle
 t_elements	*parser(char *filename)
 {
 	int			fd;
