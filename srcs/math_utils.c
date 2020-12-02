@@ -27,8 +27,8 @@ t_sq_eq_sol square_equasion(float a, float b, float c)
 	solution.d = b * b - 4 * a * c;
 	if (solution.d >= 0)
 	{
-		solution.x1 = - b + sqrt(solution.d) / (2 * a);
-		solution.x2 = - b - sqrt(solution.d) / (2 * a);
+		solution.x1 = (- b + sqrtf(solution.d)) / (2 * a);
+		solution.x2 = (- b - sqrtf(solution.d)) / (2 * a);
 	}
 	return (solution);
 }
@@ -42,5 +42,5 @@ int			minint(int a, int b)
 
 float		vect_len(t_vector3 v1)
 {
-	return (sqrt(scalar_mul(&v1, &v1)));
+	return (sqrtf(scalar_mul(&v1, &v1)));
 }

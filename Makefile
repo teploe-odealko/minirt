@@ -6,7 +6,7 @@
 #    By: bashleig <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/16 12:28:49 by bashleig          #+#    #+#              #
-#    Updated: 2020/12/01 13:17:19 by bashleig         ###   ########.fr        #
+#    Updated: 2020/12/02 13:00:04 by bashleig         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,13 +47,9 @@ $(OBJ_DIR):
 $(OBJ_DIR)/%.o:$(SRC_DIR)/%.c $(includes)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-$(NAME): $(OBJ_DIR) $(OBJ)
-	ar rcs $(NAME) $(OBJ)
-
-
 %.o: %.c
 				$(CC) $(CFLAGS) -I $(HEADER) -o $@ -c $<
-test:
+$(NAME):
 	make -s -C $(LIBFT)
 	$(CC) -g $(CFLAGS)  $(INSLUDES) $(LFLAGS) $(addprefix $(SRC_DIR)/,$(SRCS)) -o $(NAME) -lmlx -framework OpenGL -framework AppKit
 

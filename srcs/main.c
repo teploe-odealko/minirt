@@ -6,7 +6,7 @@
 /*   By: bashleig <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 23:26:14 by bashleig          #+#    #+#             */
-/*   Updated: 2020/12/02 02:43:47 by bashleig         ###   ########.fr       */
+/*   Updated: 2020/12/02 13:09:29 by bashleig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	light_printer(void* my_struct)
 	casted->color.b);
 }
 
-void	parcer_printer(t_elements *elements)
+void	parser_printer(t_elements *elements)
 {
 	printf("R %d, %d\n", elements->resolution->w, elements->resolution->h);
 	printf("A %f, %d,%d,%d\n", elements->ambient->ratio,
@@ -74,41 +74,67 @@ void	parcer_printer(t_elements *elements)
 // camera switch by button press
 // use images of minilibx
 
-
-//danger !!! could returns NULL
-// t_vector3	canvas_to_viewport(float x, float y, t_elements *elements)
-// {
-// 	t_vector3	d;
-// 	float		x_v;
-// 	float		y_v;
-// 	float		z_v;
-// 	float		o_v_norm;
-// 	t_vector3	camera_coords;
-// 	t_vector3	camera_dir;
-
-// 	camera_dir = ((t_camera*)(elements->camera_list->content))->direction;
-// 	camera_coords = ((t_camera*)(elements->camera_list->content))->coords;
-// 	o_v_norm = 0.5/tan(70);
-// 	x_v = sqrt(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.x + camera_coords.x;
-// 	y_v = sqrt(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.y + camera_coords.y;
-// 	z_v = sqrt(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.z + camera_coords.z;
-// 	d.x = x_v + ((x - elements->resolution->w / 2) / elements->resolution->w);
-// 	d.y = y_v + ((y - elements->resolution->h / 2) / elements->resolution->w);
-// 	d.z = z_v;
-//     return (d);
-// }
-
-t_vector3	canvas_to_viewport(float x, float y, t_elements *elements)
+float       vectors_angle_cos(t_vector3 *v1, char axis)
 {
-	t_vector3 d;
+	t_vector3 v2;
 
-	d.x = (x - elements->resolution->w / 2) /
-		minint(elements->resolution->w, elements->resolution->h);
-	d.y = (y - elements->resolution->h / 2) /
-		minint(elements->resolution->w, elements->resolution->h);
-	d.z = 1;
-    return (d);
+	v2.x = 0;
+	v2.y = 0;
+	v2.z = 0;
+	if (axis == 'x')
+		v2.x = 1;
+	else if (axis == 'y')
+		v2.y = 1;
+	else if (axis == 'z')
+		v2.z = 1;
+	return (
+			((v1->x * v2.x) + (v1->y * v2.y) + (v1->z * v2.z))
+			/
+			(sqrtf(v1->x * v1->x + v1->y * v1->y + v1->z * v1->z)
+			*
+			sqrtf(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z))
+		);
 }
+//danger !!! could returns NULL
+//
+ t_vector3	canvas_to_viewport(float x, float y, t_elements *elements)
+ {
+ 	t_vector3	d;
+ 	float		x_v;
+ 	float		y_v;
+ 	float		z_v;
+// 	float		o_v_norm;
+	float       v_w;
+ 	t_vector3	camera_coords;
+ 	t_vector3	camera_dir;
+
+ 	camera_dir = ((t_camera*)(elements->camera_list->content))->direction;
+ 	camera_coords = ((t_camera*)(elements->camera_list->content))->coords;
+// 	o_v_norm = 0.5 / tan(45 * M_PI / 180);
+	v_w = 2 * (float)tan(45 * M_PI / 180);
+// 	x_v = sqrtf(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.x + camera_coords.x;
+// 	y_v = sqrtf(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.y + camera_coords.y;
+// 	z_v = sqrtf(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z));
+	x_v = camera_coords.x + 1 * vectors_angle_cos(&camera_dir, 'x');
+	y_v = camera_coords.y + 1 * vectors_angle_cos(&camera_dir, 'y');
+	z_v = camera_coords.z + 1 * vectors_angle_cos(&camera_dir, 'z');
+ 	d.x = x_v + v_w * ((x - elements->resolution->w / 2) / elements->resolution->w);
+ 	d.y = y_v + v_w * ((y - elements->resolution->h / 2) / elements->resolution->w);
+ 	d.z = z_v;
+    return (d);
+ }
+
+//t_vector3	canvas_to_viewport(float x, float y, t_elements *elements)
+//{
+//	t_vector3 d;
+//
+//	d.x = (x - elements->resolution->w / 2) /
+//		minint(elements->resolution->w, elements->resolution->h);
+//	d.y = (y - elements->resolution->h / 2) /
+//		minint(elements->resolution->w, elements->resolution->h);
+//	d.z = 1;
+//    return (d);
+//}
 
 t_vector3	subtract_vectors(t_vector3 *v1, t_vector3 *v2)
 {
@@ -142,7 +168,7 @@ t_vector3	n_vector(float n, t_vector3 *v1)
 
 //malloc
 
-t_sq_eq_sol	intersect_sphere(t_sphere *sphere, t_vector3 *v, t_vector3 *camera_coords)
+t_sq_eq_sol	intersect_sphere(t_sphere *sphere, t_vector3 v, t_vector3 *camera_coords)
 {
 	float		a;
 	float		b;
@@ -151,9 +177,9 @@ t_sq_eq_sol	intersect_sphere(t_sphere *sphere, t_vector3 *v, t_vector3 *camera_c
 	t_sq_eq_sol	solution;
 
 	oc = subtract_vectors((t_vector3*)camera_coords, (t_vector3*)&sphere->center);
-	*v = subtract_vectors(v, (t_vector3*)camera_coords);
-	a = scalar_mul((t_vector3*)v, (t_vector3*)v);
-	b = 2 * scalar_mul(&oc, (t_vector3*)v);
+	v = subtract_vectors(&v, (t_vector3*)camera_coords);
+	a = scalar_mul((t_vector3*)&v, (t_vector3*)&v);
+	b = 2 * scalar_mul(&oc, (t_vector3*)&v);
 	c = scalar_mul(&oc, &oc) - pow(sphere->diameter / 2, 2);
 	solution = square_equasion(a, b, c);
 	return (solution);
@@ -196,16 +222,27 @@ float		compute_lighting(t_elements *elements, t_vector3 p, t_vector3 n)
 			&p);
 		if ((n_dot_l = scalar_mul(&n, &l)) > 0)
 		{
-			i += ((t_light*)(node->content))->bright * n_dot_l /
-			(vect_len(n) * vect_len(l));
+			float tmp = ((t_light*)(node->content))->bright * n_dot_l /
+			          (vect_len(n) * vect_len(l));
+			i += tmp;
+			if (i > 1)
+				i = 1;
+//			printf("%f\n", i);
 		}
 		node = node->next;
 	}
 	return (i);
 }
 
+void print_vector(t_vector3 *v)
+{
+	printf("x: %f\n", v->x);
+	printf("y: %f\n", v->y);
+	printf("z: %f\n", v->z);
+}
+
 t_color		compute_color(t_elements *elements, t_vector3 *camera_coords,
-	t_sphere* sphere, t_sq_eq_sol *solution, t_vector3 d)
+	t_sphere* sphere, t_sq_eq_sol *solution, t_vector3 d, int x, int y)
 {
 	t_color		color;
 	t_vector3	p;
@@ -220,17 +257,26 @@ t_color		compute_color(t_elements *elements, t_vector3 *camera_coords,
 	d = n_vector(closest_t, &d);
 	p = add_vectors(camera_coords, &d);
 	n = subtract_vectors(&p, &sphere->center);
-	n.x /= sqrt(scalar_mul(&n, &n));
-	n.y /= sqrt(scalar_mul(&n, &n));
-	n.z /= sqrt(scalar_mul(&n, &n));
+	n.x /= sqrtf(scalar_mul(&n, &n));
+	n.y /= sqrtf(scalar_mul(&n, &n));
+	n.z /= sqrtf(scalar_mul(&n, &n));
+	if (x == 500 && y == 500)
+	{
+		printf("x1 = %f\n", solution->x1);
+		printf("x2 = %f\n", solution->x2);
+		printf("closest t = %f\n", closest_t);
+		print_vector(&p);
+		print_vector(&n);
+	}
 	light = compute_lighting(elements, p, n);
 	color.r = (light * (float)sphere->color.r);
 	color.g = (light * (float)sphere->color.g);
 	color.b = (light * (float)sphere->color.b);
+	printf("r - %d, g - %d, b - %d\n", color.r, color.g, color.b);
 	return (color);
 }
 //danger !!! could returns NULL
-t_color		trace_ray(t_vector3 *camera_coords, t_vector3 v, t_elements *elements)
+t_color		trace_ray(t_vector3 *camera_coords, t_vector3 v, t_elements *elements, int x, int y)
 {
 	t_list		*sp_list;
 	t_sphere	*closest_sphere;
@@ -243,7 +289,9 @@ t_color		trace_ray(t_vector3 *camera_coords, t_vector3 v, t_elements *elements)
 	sp_list = elements->sphere_list;
 	while (sp_list)
 	{
-		solution = intersect_sphere(sp_list->content, (t_vector3*)(&v), camera_coords);
+		if (x == 500 && y == 499)
+			printf("center");
+		solution = intersect_sphere(sp_list->content, (t_vector3)(v), camera_coords);
 		if (solution.d >= 0)
 		{
 			if (is_new_solution_better(&solution, &closest_solution))
@@ -256,7 +304,7 @@ t_color		trace_ray(t_vector3 *camera_coords, t_vector3 v, t_elements *elements)
 	}
 	if (closest_sphere)
 		return (compute_color(elements, camera_coords, closest_sphere,
-		&closest_solution, subtract_vectors(&v, (t_vector3*)camera_coords)));
+		&closest_solution, subtract_vectors(&v, (t_vector3*)camera_coords), x, y));
 	return (elements->backgound_color);
 	// sphere = elements->sphere_list->content;
 }
@@ -283,7 +331,7 @@ void		set_pixel_to_img(t_elements *elements, t_mlx *mlx, t_color *color)
 		color->r * 65536 +
 		color->g * 256 +
 		color->b;
-		mlx->y++;
+	mlx->y++;
 }
 
 void		*display(t_elements *elements)
@@ -302,7 +350,7 @@ void		*display(t_elements *elements)
 			v = canvas_to_viewport(mlx.x, mlx.y, elements);
 			color = trace_ray(&((t_camera*)
 			(elements->camera_list->content))->coords,
-			v, elements);
+			v, elements, mlx.x, mlx.y);
 			set_pixel_to_img(elements, &mlx, &color);
 		}
 		mlx.x++;
@@ -326,7 +374,7 @@ int		main(int argc, char *argv[])
 	}
 	if (!(elements = parser(argv[1])))
 		return (-1);
-	// parcer_printer(elements);
+	// parser_printer(elements);
 	display(elements);
 	destructor(elements);
 	return (0);

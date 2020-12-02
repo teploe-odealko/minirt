@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../includes/minirt.h
+sys/types.h
+-
+sys/uio.h
+-
+stdio.h
+-
+libft.h
+../includes/libft.h
+fcntl.h
+-
+parser.h
+../includes/parser.h
+math.h
+-
+mlx.h
+../includes/mlx.h
+
+../includes/parser.h
+
+../libft/libft.h
+stdlib.h
+-
+unistd.h
+-
+
+/Users/bashleig/proj/minirt/srcs/main.c
+stdio.h
+-
+minirt.h
+/Users/bashleig/proj/minirt/srcs/minirt.h
+
+/usr/local/include/mlx.h
+
