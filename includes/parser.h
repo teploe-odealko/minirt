@@ -45,7 +45,7 @@ typedef struct	s_camera
 {
 	t_vector3	direction;
 	t_vector3	coords;
-	int			FOV;
+	float		FOV;
 }				t_camera;
 
 typedef struct	s_light
@@ -57,33 +57,36 @@ typedef struct	s_light
 
 typedef struct	s_sphere
 {
+	char        type;
+	t_color		color;
 	t_vector3	center;
 	float		diameter;
-	t_color		color;
 }				t_sphere;
 
 typedef struct	s_plane
 {
+	char        type;
+	t_color		color;
 	t_vector3	norm;
 	t_vector3	coords;
-	t_color		color;
 }				t_plane;
 
 typedef struct	s_cylinder
 {
+	char        type;
+	t_color		color;
 	t_vector3	norm;
 	t_vector3	coords;
-	t_color		color;
 	float		diameter;
 	float		height;
 }				t_cylinder;
 
 typedef struct	s_trinangle
 {
+	t_color		color;
 	t_vector3	p1;
 	t_vector3	p2;
 	t_vector3	p3;
-	t_color		color;
 }				t_trinangle;
 int				parse_rgb(char **line, t_color *color);
 int				parse_coords(char **line, t_vector3 *coords);
