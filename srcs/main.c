@@ -25,7 +25,7 @@ void	camera_printer(void* camera_void)
 	camera->direction.x,
 	camera->direction.y,
 	camera->direction.z);
-	printf("camera FOV: %d\n", camera->FOV);
+	printf("camera FOV: %f\n", camera->FOV);
 }
 
 void	sphere_printer(void* my_struct)
@@ -111,7 +111,9 @@ float       vectors_angle_cos(t_vector3 *v1, char axis)
  	camera_dir = ((t_camera*)(elements->camera_list->content))->direction;
  	camera_coords = ((t_camera*)(elements->camera_list->content))->coords;
 // 	o_v_norm = 0.5 / tan(45 * M_PI / 180);
-	v_w = 2 * (float)tan(45 * M_PI / 180);
+	v_w = 2 * (float)tan(
+			(((t_camera*)(elements->camera_list->content))->FOV / 2)
+			* M_PI / 180);
 // 	x_v = sqrtf(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.x + camera_coords.x;
 // 	y_v = sqrtf(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z)) * camera_dir.y + camera_coords.y;
 // 	z_v = sqrtf(o_v_norm / (camera_dir.x + camera_dir.y + camera_dir.z));
@@ -119,7 +121,7 @@ float       vectors_angle_cos(t_vector3 *v1, char axis)
 	y_v = camera_coords.y + 1 * vectors_angle_cos(&camera_dir, 'y');
 	z_v = camera_coords.z + 1 * vectors_angle_cos(&camera_dir, 'z');
  	d.x = x_v + v_w * ((x - elements->resolution->w / 2) / elements->resolution->w);
- 	d.y = y_v + v_w * ((y - elements->resolution->h / 2) / elements->resolution->w);
+ 	d.y = y_v + -1 *  v_w * ((y - elements->resolution->h / 2) / elements->resolution->w);
  	d.z = z_v;
     return (d);
  }
@@ -242,9 +244,8 @@ void print_vector(t_vector3 *v)
 }
 
 t_color		compute_color(t_elements *elements, t_vector3 *camera_coords,
-	t_sphere* sphere, t_sq_eq_sol *solution, t_vector3 d, int x, int y)
+	t_color color, t_sq_eq_sol *solution, t_vector3 d, int x, int y)
 {
-	t_color		color;
 	t_vector3	p;
 	t_vector3	n;
 	float		closest_t;
@@ -257,55 +258,82 @@ t_color		compute_color(t_elements *elements, t_vector3 *camera_coords,
 	d = n_vector(closest_t, &d);
 	p = add_vectors(camera_coords, &d);
 	n = subtract_vectors(&p, &sphere->center);
-	n.x /= sqrtf(scalar_mul(&n, &n));
-	n.y /= sqrtf(scalar_mul(&n, &n));
-	n.z /= sqrtf(scalar_mul(&n, &n));
-	if (x == 500 && y == 500)
-	{
-		printf("x1 = %f\n", solution->x1);
-		printf("x2 = %f\n", solution->x2);
-		printf("closest t = %f\n", closest_t);
-		print_vector(&p);
-		print_vector(&n);
-	}
+	n.x /= vect_len(n);
+	n.y /= vect_len(n);
+	n.z /= vect_len(n);
+
+
 	light = compute_lighting(elements, p, n);
-	color.r = (light * (float)sphere->color.r);
-	color.g = (light * (float)sphere->color.g);
-	color.b = (light * (float)sphere->color.b);
+	color.r = (int)(light * (float)color.r);
+	color.g = (int)(light * (float)color.g);
+	color.b = (int)(light * (float)color.b);
 	printf("r - %d, g - %d, b - %d\n", color.r, color.g, color.b);
 	return (color);
 }
 //danger !!! could returns NULL
+
+t_color     set_best_solution(t_sq_eq_sol new_sol,
+							  t_sq_eq_sol *best_sol,
+							  t_list **list,
+							  t_color color_old)
+{
+	int     new_min;
+	int     best_min;
+	t_color color;
+
+	new_min = MAX_INT;
+	best_min = MAX_INT;
+	if (new_sol.x1 < new_sol.x2 && new_sol.x1 > 1)
+		new_min = new_sol.x1;
+	else if (new_sol.x2 > 1)
+		new_min = new_sol.x2;
+	if (best_sol->x1 < best_sol->x2 && best_sol->x1 > 1)
+		best_min = best_sol->x1;
+	else if (best_sol->x2 > 1)
+		best_min = best_sol->x2;
+	if (new_min < best_min)
+	{
+		*best_sol = new_sol;
+		color = ((t_sphere*)(*list)->content)->color;
+		*list = (*list)->next;
+		return (color);
+	}
+	*list = (*list)->next;
+	return (color_old);
+}
+
+t_color       intersect_object(t_elements *elements,
+							   t_vector3 v,
+							   t_vector3 *camera_coords,
+							   t_vector3 *norm)
+{
+//	t_sq_eq_sol cur_solution;
+	t_color     color;
+	t_list      *list;
+
+	color = elements->backgound_color;
+	while ((list = elements->sphere_list))
+		color = set_best_solution(intersect_sphere(list->content, v,
+					 camera_coords), best_solution, &list, color);
+	return (color);
+}
+
 t_color		trace_ray(t_vector3 *camera_coords, t_vector3 v, t_elements *elements, int x, int y)
 {
-	t_list		*sp_list;
+//	t_list		*sp_list;
 	t_sphere	*closest_sphere;
-	t_sq_eq_sol	solution;
-	t_sq_eq_sol	closest_solution;
+	t_color     intersected_color;
+	t_sq_eq_sol	best_solution;
 
 	closest_sphere = NULL;
-	closest_solution.x1 = 0;
-	closest_solution.x2 = 0;
-	sp_list = elements->sphere_list;
-	while (sp_list)
-	{
-		if (x == 500 && y == 499)
-			printf("center");
-		solution = intersect_sphere(sp_list->content, (t_vector3)(v), camera_coords);
-		if (solution.d >= 0)
-		{
-			if (is_new_solution_better(&solution, &closest_solution))
-			{
-				closest_solution = solution;
-				closest_sphere = ((t_sphere*)(sp_list->content));
-			}
-		}
-		sp_list = sp_list->next;
-	}
-	if (closest_sphere)
-		return (compute_color(elements, camera_coords, closest_sphere,
-		&closest_solution, subtract_vectors(&v, (t_vector3*)camera_coords), x, y));
-	return (elements->backgound_color);
+	best_solution.x1 = 0;
+	best_solution.x2 = 0;
+//	sp_list = elements->sphere_list;
+
+	intersected_color = intersect_object(elements, (t_vector3)(v), camera_coords, &best_solution);
+
+	return (compute_color(elements, camera_coords, closest_sphere,
+		&best_solution, subtract_vectors(&v, (t_vector3*)camera_coords), x, y));
 	// sphere = elements->sphere_list->content;
 }
 
@@ -331,7 +359,7 @@ void		set_pixel_to_img(t_elements *elements, t_mlx *mlx, t_color *color)
 		color->r * 65536 +
 		color->g * 256 +
 		color->b;
-	mlx->y++;
+	mlx->y--;
 }
 
 void		*display(t_elements *elements)
@@ -344,8 +372,8 @@ void		*display(t_elements *elements)
 		return (NULL);
 	while(mlx.x < elements->resolution->w)
 	{
-		mlx.y = 0;
-		while (mlx.y < elements->resolution->h)
+		mlx.y = elements->resolution->h - 1;
+		while (mlx.y >= 0)
 		{
 			v = canvas_to_viewport(mlx.x, mlx.y, elements);
 			color = trace_ray(&((t_camera*)
